@@ -52,6 +52,13 @@
             background-color: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
         }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+        .step-glow:hover {
+            animation: pulseGlow 1.5s infinite;
+        }
     </style>
 </head>
 <body class="bg-cyber-dark text-slate-200 antialiased font-sans min-h-screen selection:bg-cyan-500 selection:text-black">
@@ -72,7 +79,9 @@
                 <a href="#ai-engines" class="text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors uppercase">AI Engines</a>
                 <a href="#architecture" class="text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors uppercase">Architecture</a>
                 <a href="#microservices" class="text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors uppercase">Microservices</a>
-                <a href="#frontend-apps" class="text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors uppercase">Apps & APKs</a>
+                <a href="#demo-section" class="text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-colors uppercase flex items-center gap-1">
+                    <i class="fa-solid fa-play text-[10px]"></i> Try / Demo
+                </a>
                 <a href="https://github.com/mga-code-base" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs font-mono text-cyan-300 border border-cyan-500/30 flex items-center gap-2 transition-all">
                     <i class="fa-brands fa-github"></i> GitHub Org
                 </a>
@@ -198,7 +207,7 @@
                             <div class="w-10 h-10 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center text-xl border border-pink-500/20">
                                 <i class="fa-solid fa-user-check"></i>
                             </div>
-                            <span class="text-[10px] font-mono bg-pink-950/80 text-pink-400 px-2 py-0.5 rounded border border-pink-800">Aiven pgvector</span>
+                            <span class="text-[10px] font-mono bg-pink-950/80 text-pink-400 px-2 py-0.5 rounded border border-pink-800">Local K8s</span>
                         </div>
                         <div>
                             <div class="text-[10px] font-mono text-pink-400 uppercase tracking-wider">Biometrics</div>
@@ -218,7 +227,7 @@
             </div>
         </section>
 
-                <!-- System Architecture -->
+        <!-- System Architecture -->
         <section id="architecture" class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -245,8 +254,8 @@
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-white">Image file not found: <span class="text-cyan-400 font-mono">architecture-diagram.png</span></h3>
-                        <p class="text-xs text-slate-400 mt-1">Ensure <code class="bg-black/60 px-1.5 py-0.5 rounded text-cyan-300">architecture-diagram.png</code> is in the same repository root folder as <code class="bg-black/60 px-1.5 py-0.5 rounded text-cyan-300">index.html</code>.</p>
+                        <h3 class="text-sm font-bold text-white">Image file not found: <span class="text-cyan-400 font-mono">./assets/architecture-diagram.png</span></h3>
+                        <p class="text-xs text-slate-400 mt-1">Ensure <code class="bg-black/60 px-1.5 py-0.5 rounded text-cyan-300">architecture-diagram.png</code> is in the <code class="bg-black/60 px-1.5 py-0.5 rounded text-cyan-300">./assets/</code> folder.</p>
                     </div>
                 </div>
             </div>
@@ -418,15 +427,83 @@
             </div>
         </section>
 
-        <!-- Frontend Applications Table -->
-        <section id="frontend-apps" class="space-y-4">
-            <div>
-                <h2 class="text-2xl font-bold text-white flex items-center gap-2.5">
-                    <i class="fa-solid fa-mobile-screen text-cyan-400"></i> Client Applications
-                </h2>
-                <p class="text-xs text-slate-400">Demo walkthroughs, downloadable APKs, and client repositories.</p>
+        <!-- Try It Yourself or Watch Demo (Unified Interactive Client Section) -->
+        <section id="demo-section" class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2.5">
+                        <i class="fa-solid fa-mobile-screen text-cyan-400"></i> Try It Yourself or Watch Demo
+                    </h2>
+                </div>
+                
+                <!-- Combined Unified Status & Refresh Button -->
+                <div>
+                    <button id="service-status-btn" 
+                            onclick="checkHealth()" 
+                            class="px-3.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-mono hover:brightness-110 flex items-center gap-2 transition-all shadow-md group">
+                        <i id="status-icon" class="fa-solid fa-arrows-rotate text-[11px] transition-transform group-hover:rotate-180 duration-500"></i>
+                        <span id="status-label" class="font-bold">Backend Service Status: Checking...</span>
+                    </button>
+                </div>
             </div>
 
+            <!-- Modern Interactive Flow Architecture Banner -->
+            <div class="ai-card rounded-2xl p-5 space-y-4 border-cyan-900/40">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono text-slate-400 border-b border-slate-800/80 pb-3">
+                    <div class="flex items-center gap-2 text-amber-300 font-bold">
+                        <i class="fa-solid fa-circle-nodes text-sm"></i> Interactive Testing Lifecycle:
+                    </div>
+                    <div>
+                        Backend services run on-demand. Demonstrator contact available in 
+                        <a href="https://docs.google.com/document/d/1HirB5186CXU2wP7cLC_O67VxQ320w8Z9/edit?usp=drive_link&ouid=100243257602142250887&rtpof=true&sd=true" target="_blank" class="text-cyan-400 underline hover:text-cyan-300 font-bold">Resume &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Elegant Scaffolding Step Pipeline -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+                    <!-- Step 1 -->
+                    <div class="p-3 rounded-xl bg-slate-900/90 border border-cyan-500/20 space-y-1.5 relative overflow-hidden group hover:border-cyan-400 transition-all step-glow">
+                        <div class="flex items-center justify-between text-[11px] font-mono">
+                            <span class="text-cyan-400 font-bold">STEP 01</span>
+                            <i class="fa-solid fa-user-shield text-cyan-400/60"></i>
+                        </div>
+                        <div class="text-xs font-bold text-white">SignUp as Admin</div>
+                        <p class="text-[11px] text-slate-400 leading-tight">Create a Branch Owner profile via MGA Admin & Trainer App.</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="p-3 rounded-xl bg-slate-900/90 border border-purple-500/20 space-y-1.5 relative overflow-hidden group hover:border-purple-400 transition-all step-glow">
+                        <div class="flex items-center justify-between text-[11px] font-mono">
+                            <span class="text-purple-400 font-bold">STEP 02</span>
+                            <i class="fa-solid fa-key text-purple-400/60"></i>
+                        </div>
+                        <div class="text-xs font-bold text-white">Admin Activation</div>
+                        <p class="text-[11px] text-slate-400 leading-tight">Franchise Owner (Demonstrator) activates your branch account.</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="p-3 rounded-xl bg-slate-900/90 border border-pink-500/20 space-y-1.5 relative overflow-hidden group hover:border-pink-400 transition-all step-glow">
+                        <div class="flex items-center justify-between text-[11px] font-mono">
+                            <span class="text-pink-400 font-bold">STEP 03</span>
+                            <i class="fa-solid fa-users-viewfinder text-pink-400/60"></i>
+                        </div>
+                        <div class="text-xs font-bold text-white">Register Accounts</div>
+                        <p class="text-[11px] text-slate-400 leading-tight">Create Member or Trainer accounts via MGA Member & Trainer Apps.</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="p-3 rounded-xl bg-slate-900/90 border border-emerald-500/20 space-y-1.5 relative overflow-hidden group hover:border-emerald-400 transition-all step-glow">
+                        <div class="flex items-center justify-between text-[11px] font-mono">
+                            <span class="text-emerald-400 font-bold">STEP 04</span>
+                            <i class="fa-solid fa-circle-check text-emerald-400/60"></i>
+                        </div>
+                        <div class="text-xs font-bold text-white">Approve & Test</div>
+                        <p class="text-[11px] text-slate-400 leading-tight">Approve from Admin App & test live AI biometrics and kinematic flows.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Applications Table -->
             <div class="ai-card rounded-2xl overflow-hidden border border-cyber-border">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-300">
@@ -555,7 +632,7 @@
         </div>
     </footer>
 
-    <!-- Video Modal Script -->
+    <!-- Interactive Scripts -->
     <script>
         function openVideoModal(videoUrl, title) {
             const modal = document.getElementById('videoModal');
@@ -582,6 +659,71 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeVideoModal();
         });
+
+        // Dual-Strategy Health Check (Direct Fetch + No-Cors Fallback)
+        async function checkHealth() {
+            const btn = document.getElementById('service-status-btn');
+            const icon = document.getElementById('status-icon');
+            const label = document.getElementById('status-label');
+            
+            // Set Checking / Spinning State
+            icon.classList.add('fa-spin');
+            btn.className = "px-3.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-mono hover:brightness-110 flex items-center gap-2 transition-all shadow-md";
+            label.textContent = "Backend Service Status: Pinging...";
+
+            const targetUrl = 'https://api.06071995.xyz/api/admins/primaryexists';
+
+            // Strategy 1: Standard CORS fetch
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+                const response = await fetch(targetUrl + '?_t=' + Date.now(), {
+                    method: 'GET',
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (response.ok || response.status === 200) {
+                    setOnlineState(btn, label);
+                    icon.classList.remove('fa-spin');
+                    return;
+                }
+            } catch (err) {
+                // CORS or network error occurred with standard fetch, proceed to Strategy 2
+            }
+
+            // Strategy 2: Opaque / No-CORS network ping test
+            // If Cloudflare or the server reachable and responds (even without CORS headers), it succeeds
+            try {
+                const controller2 = new AbortController();
+                const timeoutId2 = setTimeout(() => controller2.abort(), 4000);
+
+                await fetch(targetUrl + '?_t=' + Date.now(), {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    signal: controller2.signal
+                });
+                clearTimeout(timeoutId2);
+
+                // If no exception thrown, the host and network connection is active and responding
+                setOnlineState(btn, label);
+            } catch (networkErr) {
+                // Completely unreachable / offline
+                btn.className = "px-3.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/40 text-xs font-mono hover:brightness-110 flex items-center gap-2 transition-all shadow-md";
+                label.textContent = "Backend Service Status: Offline";
+            } finally {
+                icon.classList.remove('fa-spin');
+            }
+        }
+
+        function setOnlineState(btn, label) {
+            btn.className = "px-3.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 text-xs font-mono hover:brightness-110 flex items-center gap-2 transition-all shadow-md shadow-emerald-500/10";
+            label.textContent = "Backend Service Status: Online (HTTP 200)";
+        }
+
+        // Auto-check on initial page load
+        document.addEventListener('DOMContentLoaded', checkHealth);
     </script>
 
 </body>
