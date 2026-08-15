@@ -436,13 +436,13 @@
                     </h2>
                 </div>
                 
-                <!-- Combined Unified Status & Refresh Button -->
+                <!-- Combined In-Place Status Check Button -->
                 <div>
                     <button id="service-status-btn" 
                             onclick="checkHealth()" 
-                            class="px-3.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-mono hover:brightness-110 flex items-center gap-2 transition-all shadow-md group">
-                        <i id="status-icon" class="fa-solid fa-arrows-rotate text-[11px] transition-transform group-hover:rotate-180 duration-500"></i>
-                        <span id="status-label" class="font-bold">Backend Service Status: Checking...</span>
+                            class="px-3.5 py-1.5 rounded-lg bg-slate-900 text-slate-400 border border-slate-700 text-xs font-mono hover:bg-slate-800 flex items-center gap-2 transition-all shadow-md group">
+                        <i id="status-icon" class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                        <span id="status-label" class="font-bold">Backend Service Status: Check Status</span>
                     </button>
                 </div>
             </div>
@@ -660,70 +660,56 @@
             if (e.key === 'Escape') closeVideoModal();
         });
 
-        // Dual-Strategy Health Check (Direct Fetch + No-Cors Fallback)
+        // Strict in-place health check (no false positives from Cloudflare error pages)
         async function checkHealth() {
             const btn = document.getElementById('service-status-btn');
             const icon = document.getElementById('status-icon');
             const label = document.getElementById('status-label');
             
-            // Set Checking / Spinning State
-            icon.classList.add('fa-spin');
+            // Set Checking State (Spinning icon + Amber color)
+            icon.className = "fa-solid fa-arrows-rotate text-[11px] fa-spin";
             btn.className = "px-3.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-mono hover:brightness-110 flex items-center gap-2 transition-all shadow-md";
             label.textContent = "Backend Service Status: Pinging...";
 
-            const targetUrl = 'https://api.06071995.xyz/api/admins/primaryexists';
+            const targetUrl = 'mga-health-proxy.vivianfernandes6795.workers.dev';
 
-            // Strategy 1: Standard CORS fetch
             try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 4000);
 
+                // Perform direct GET fetch without 'no-cors' mask
                 const response = await fetch(targetUrl + '?_t=' + Date.now(), {
                     method: 'GET',
+                    headers: { 'Accept': 'application/json, text/plain, */*' },
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
 
-                if (response.ok || response.status === 200) {
-                    setOnlineState(btn, label);
-                    icon.classList.remove('fa-spin');
-                    return;
+                // Strictly require HTTP 200 and successful body
+                if (response.ok && response.status === 200) {
+                    const text = await response.text();
+                    const trimmed = text.trim();
+                    if (trimmed === "1" || (!isNaN(trimmed) && Number.isInteger(parseFloat(trimmed)))) {
+                        btn.className = "px-3.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-mono hover:bg-emerald-500/20 flex items-center gap-2 transition-all shadow-md";
+                        icon.className = "fa-solid fa-circle-check text-emerald-400 text-[11px]";
+                        label.textContent = "Backend Service Status: Online (HTTP 200)";
+                        return;
+                    }
                 }
+                
+                // If status is not 200 or payload isn't valid integer
+                setOfflineUI(btn, icon, label);
             } catch (err) {
-                // CORS or network error occurred with standard fetch, proceed to Strategy 2
-            }
-
-            // Strategy 2: Opaque / No-CORS network ping test
-            // If Cloudflare or the server reachable and responds (even without CORS headers), it succeeds
-            try {
-                const controller2 = new AbortController();
-                const timeoutId2 = setTimeout(() => controller2.abort(), 4000);
-
-                await fetch(targetUrl + '?_t=' + Date.now(), {
-                    method: 'GET',
-                    mode: 'no-cors',
-                    signal: controller2.signal
-                });
-                clearTimeout(timeoutId2);
-
-                // If no exception thrown, the host and network connection is active and responding
-                setOnlineState(btn, label);
-            } catch (networkErr) {
-                // Completely unreachable / offline
-                btn.className = "px-3.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/40 text-xs font-mono hover:brightness-110 flex items-center gap-2 transition-all shadow-md";
-                label.textContent = "Backend Service Status: Offline";
-            } finally {
-                icon.classList.remove('fa-spin');
+                // Cloudflare Error 1033, 521, timeout, or tunnel disconnection
+                setOfflineUI(btn, icon, label);
             }
         }
 
-        function setOnlineState(btn, label) {
-            btn.className = "px-3.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 text-xs font-mono hover:brightness-110 flex items-center gap-2 transition-all shadow-md shadow-emerald-500/10";
-            label.textContent = "Backend Service Status: Online (HTTP 200)";
+        function setOfflineUI(btn, icon, label) {
+            btn.className = "px-3.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/40 text-xs font-mono hover:bg-red-500/20 flex items-center gap-2 transition-all shadow-md shadow-red-500/10";
+            icon.className = "fa-solid fa-triangle-exclamation text-red-400 text-[11px]";
+            label.textContent = "Backend Service Status: Offline (On-Demand)";
         }
-
-        // Auto-check on initial page load
-        document.addEventListener('DOMContentLoaded', checkHealth);
     </script>
 
 </body>
